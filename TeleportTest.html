@@ -43,11 +43,12 @@
 			url: scoreURL,
 			method: "GET"
 		}).done(function(response) {
-			// console.log(response);
+			//console.log(response);
 			});
+
 	}
 	
-	// urban area location
+	// urban a location
 	for (var i = 0; i < uaList.length; i++) {
 
 		var locationURL = "https://api.teleport.org/api/urban_areas/slug:" + uaList[i] + "/";
@@ -56,11 +57,15 @@
 		url: locationURL,
 		method: "GET"
 		}).done(function(response) {
-	  		locs.push({lat: response.bounding_box.latlon.north, lng: response.bounding_box.latlon.west});
+			console.log(response);
+			var latitude = (response.bounding_box.latlon.north + response.bounding_box.latlon.south)/2;
+			var longitude = (response.bounding_box.latlon.west + response.bounding_box.latlon.east)/2;
+	  		locs.push({lat: latitude, lng: longitude});
 	  		if (locs.length == 254) {
-	  			console.log("locations" + JSON.stringify(locs));
+	  			//console.log("locations" + JSON.stringify(locs));
 	  			var locations = locs;
 	  			initMap();
+
 	  		}
 		}); 	
 	}
