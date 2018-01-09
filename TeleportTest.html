@@ -137,6 +137,8 @@
 
 <button id="submit">submit</button>
 
+<div id="top10display"></div>
+
 <div id="map"></div>
 
 <script>
@@ -151,7 +153,7 @@ var categories = ["Housing", "Cost of Living", "Startups", "Venture Capital", "T
 	var totalScore = 0;
 	var cityBeenScored = {};
 	var m=0;
-
+ 	var displayCity = "";
    	var locs = [];
 	// urban area query
     var uaList = ["aarhus", "adelaide", "albuquerque", "almaty", "amsterdam", "anchorage", "ankara", "asheville", "asuncion", "athens", "atlanta", "auckland", "austin", "baku", "bali", "bangkok", "barcelona", "beijing", "beirut", "belfast", "belgrade", "belize-city", "bengaluru", "berlin", "bern", "birmingham","bogota", "boise", "bologna", "bordeaux", "boston", "boulder", "bozeman", "bratislava", "brisbane", "bristol", "brussels", "bucharest", "budapest", "buenos-aires", "buffalo", "cairo", "calgary", "cambridge", "cape-town", "caracas", "cardiff", "casablanca", "charleston", "charlotte", "chattanooga", "chennai", "chiang-mai", "chicago", "chisinau", "christchurch", "cincinnati", "cleveland", "cluj-napoca", "cologne", "colorado-springs", "columbus", "copenhagen", "cork", "curitiba", "dallas", "dar-es-salaam", "delhi", "denver", "des-moines", "detroit", "doha", "dresden", "dubai", "dublin", "dusseldorf", "edinburgh", "edmonton", "eindhoven", "eugene", "florence", "florianopolis", "fort-collins", "frankfurt", "fukuoka", "gdansk", "geneva", "glasgow", "gothenburg", "grenoble", "guadalajara", "guatemala-city", "halifax", "hamburg", "hannover", "havana", "helsinki", "ho-chi-minh-city", "hong-kong", "honolulu", "houston", "hyderabad", "indianapolis", "innsbruck", "istanbul", "jacksonville", "jakarta", "johannesburg", "kansas-city", "karlsruhe", "kathmandu", "kiev", "kingston", "knoxville", "krakow", "kuala-lumpur", "lagos", "la-paz", "las-palmas-de-gran-canaria", "las-vegas","lausanne", "leipzig", "lille", "lima", "lisbon", "liverpool", "ljubljana", "london", "los-angeles", "louisville", "luxembourg", "lviv", "lyon", "madison", "madrid", "malaga", "malmo", "managua", "manchester", "manila", "marseille", "medellin", "melbourne", "memphis", "mexico-city", "miami", "milan", "milwaukee", "minneapolis-saint-paul", "minsk", "montevideo", "montreal", "moscow", "mumbai", "munich", "nairobi", "nantes", "naples", "nashville", "new-orleans", "new-york", "nice", "nicosia", "oklahoma-city", "omaha", "orlando", "osaka", "oslo", "ottawa", "oulu", "oxford", "palo-alto", "panama", "paris", "perth", "philadelphia", "phnom-penh", "phoenix", "phuket", "pittsburgh", "portland-me", "portland-or", "porto", "porto-alegre", "prague", "providence", "quito", "raleigh", "reykjavik", "richmond", "riga", "rio-de-janeiro", "riyadh", "rochester", "rome", "rotterdam", "saint-petersburg", "salt-lake-city", "san-antonio", "san-diego", "san-francisco-bay-area", "san-jose", "san-juan", "san-luis-obispo", "san-salvador", "santiago", "santo-domingo", "sao-paulo", "sarajevo", "saskatoon", "seattle", "seoul", "seville", "shanghai", "singapore", "skopje", "sofia", "st-louis", "stockholm", "stuttgart", "sydney", "taipei", "tallinn", "tampa-bay-area", "tampere", "tartu", "tashkent", "tbilisi", "tehran", "tel-aviv", "the-hague", "thessaloniki", "tokyo", "toronto", "toulouse", "tunis", "turin", "turku", "uppsala", "utrecht", "valencia", "valletta", "vancouver", "victoria", "vienna", "vilnius", "warsaw", "washington-dc", "wellington", "winnipeg", "wroclaw", "yerevan", "zagreb", "zurich"];
@@ -185,15 +187,11 @@ var categories = ["Housing", "Cost of Living", "Startups", "Venture Capital", "T
 				for (var j = 0; j < 17; j++) {
 					score = response.categories[j].score_out_of_10;
 					cityScoreAccumulated = cityScoreAccumulated + (score * values[j]);
-				 
-			
 				}// Enf For-Loop
-				// console.log("Cities' Accumulated Score: " + cityScoreAccumulated);
-			
 				arrayScoredCities();
 			});// End .done()
 	}// Enf For-Loop to access the scores of urban areas
-    });
+});
 	
 console.log("Sorted: " , citiesScored);
 
@@ -213,14 +211,25 @@ function cityLocation() {
 	  		locs.push({lat: latitude, lng: longitude});
 	  			if (locs.length == 10) {
 	  			// console.log("locations" + JSON.stringify(locs));
+	  			displayTenTopCities();
 	  			initMap();
 	  			} // End of "if (locs.length"
 			}); // End of .done  	
   	} // End of for-loop k
 } //End of cityLocation
 
-function initMap() {
+//Function to display the top 10 cities before the map
+function displayTenTopCities() {
+	for (l = 0; l<10; l++) {
+		var res = String.fromCharCode(65+l);
+		displayCity = (res+". "+citiesScored[l].city + " " + (citiesScored[l].score).toFixed(5)+", ");
+		console.log(displayCity);
+		$("#top10display").append(displayCity);
+	}
+}
 
+//Function to display the cities in the map
+function initMap() {
     var map = new google.maps.Map(document.getElementById('map'), {
     	zoom: 2,
         center: {lat: 0.000, lng: 90.000}
@@ -245,6 +254,7 @@ function initMap() {
         {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
     }
 
+//Function to array the cities from best option to worst option
 function arrayScoredCities() {
     var cityName = uaList[m];
 	var totalScore = cityScoreAccumulated;
