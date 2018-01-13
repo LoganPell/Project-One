@@ -160,7 +160,13 @@ var categories = ["Housing", "Cost of Living", "Startups", "Venture Capital", "T
 
     //storing values
     $("#submit").on("click", function() {
+        m = 0;
+        locs = [];        
+        citiesScored = [];
+        citiesToDisplay = [];
+        citiesBeenScored = [];    
         values = [];
+         $("#top10display").empty();
         $("select option:selected").each(function () {
             var selected = $(this).val();
             values.push(selected);
@@ -192,8 +198,30 @@ var categories = ["Housing", "Cost of Living", "Startups", "Venture Capital", "T
 			});// End .done()
 	}// Enf For-Loop to access the scores of urban areas
 });
-	
+
+//Function to array the cities from best option to worst option
+function arrayScoredCities() {
+    var cityName = uaList[m];
+    var totalScore = cityScoreAccumulated;
+    var cityBeenScored = {
+        city: cityName,
+        score: totalScore
+    };
+    citiesScored.push(cityBeenScored);
+    organizeCities();
+    m++;
+    if (m === 254) {
+        cityLocation();
+    }
+}; //End of arrayScoredCities
+
 console.log("Sorted: " , citiesScored);
+
+// Sorting of the array with JS .sort
+function organizeCities() {
+    citiesScored.sort(function(a, b){return b.score - a.score});
+    // console.log("Sorted Array: ", citiesScored);
+}
 
 // urban a location
 function cityLocation() {
@@ -220,20 +248,21 @@ function cityLocation() {
 
 //Function to display the top 10 cities before the map
 function displayTenTopCities() {
-	for (l = 0; l<10; l++) {
-		var res = String.fromCharCode(65+l);
-		displayCity = (res+". "+citiesScored[l].city + " " + (citiesScored[l].score).toFixed(5)+", ");
-		console.log(displayCity);
-		$("#top10display").append(displayCity);
-	}
+    for (l = 0; l<10; l++) {
+        var res = String.fromCharCode(65+l);
+        displayCity = (res+". "+citiesScored[l].city + " " + (citiesScored[l].score).toFixed(5)+",   ");
+        console.log(displayCity);
+       
+        $("#top10display").append(displayCity);
+    }
 }
 
 //Function to display the cities in the map
 function initMap() {
     var map = new google.maps.Map(document.getElementById('map'), {
-    	zoom: 2,
+        zoom: 2,
         center: {lat: 0.000, lng: 90.000}
-    });
+    }); // End var map
 
     // Create an array of alphabetical characters used to label the markers.
     var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -243,38 +272,15 @@ function initMap() {
     // create an array of markers based on a given "locations" array.
     // The map() method here has nothing to do with the Google Maps API.
     var markers = locs.map(function(location, i) {
-    	return new google.maps.Marker({
-    	    position: location,
-        	label: labels[i % labels.length]
-        });
-    });
+        return new google.maps.Marker({
+            position: location,
+            label: labels[i % labels.length]
+        }); //End return new
+    }); // End var markers
 
     // Add a marker clusterer to manage the markers.
-    var markerCluster = new MarkerClusterer(map, markers,
-        {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
-    }
-
-//Function to array the cities from best option to worst option
-function arrayScoredCities() {
-    var cityName = uaList[m];
-	var totalScore = cityScoreAccumulated;
-	var cityBeenScored = {
-		city: cityName,
-		score: totalScore
-	};
-	citiesScored.push(cityBeenScored);
-    organizeCities();
-	m++;
-	if (m === 254) {
-		cityLocation();
-	}
-}; //End of arrayScoredCities
-
-// Sorting of the array with JS .sort
-function organizeCities() {
-	citiesScored.sort(function(a, b){return b.score - a.score});
-	// console.log("Sorted Array: ", citiesScored);
-}
+    var markerCluster = new MarkerClusterer(map, markers, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+} // End of initMap()
 
 </script>
 
