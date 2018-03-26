@@ -24,6 +24,11 @@ body {
 	margin: 25px;
 }
 
+#instructions {
+	width: 50%;
+	margin-left: 25px;
+}
+
 /* City Attributes and Vities result box containers format */
 #rankHolder, #topCities {
 	max-width: 225px;
